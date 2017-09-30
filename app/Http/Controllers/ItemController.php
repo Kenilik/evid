@@ -21,6 +21,17 @@ class ItemController extends Controller
         $this->middleware('auth');
     }
 
+    public function ajaxRequest()
+    {
+        return view('ajaxRequest');
+    }
+
+    public function ajaxRequestPost()
+    {
+        $input = request()->all();
+        return response()->json(['success'=>'Got Simple Ajax Request.']);
+    }    
+
     /**
      * Display a listing of the resource.
      *

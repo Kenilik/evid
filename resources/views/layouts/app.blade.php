@@ -28,7 +28,6 @@
     <script type="text/javascript" src="{{ asset('js/pdfmake.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/datatables.js') }}"></script>
 
-
 </head>
 <body>
 <div id='app'>

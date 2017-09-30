@@ -10347,6 +10347,9 @@ __webpack_require__(35);
 /***/ (function(module, exports) {
 
 /*
+
+29/09/17 SP - commented out - believe this may be needed for the charting examples in sbadmin!!!
+
 var lineChartData = {
     labels: ["January", "February", "March", "April", "May", "June", "July"],
     datasets: [

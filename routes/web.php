@@ -9,7 +9,10 @@ Route::get('/', 'InvestigationController@index')->name('home');
 Route::get('/invs', 'InvestigationController@index');
 Route::get('/invs/{investigation}', 'InvestigationController@searchInvItems')->name('searchInvItems');
 Route::get('/invs/{investigation}/items', 'ItemController@index')->name('items');
-//Route::get('/invs/{investigation}/filteredItems', 'ItemController@filterItems')->name('filterItems');
+
+Route::get('ajaxRequest', 'ItemController@ajaxRequest');
+Route::post('ajaxRequest', 'ItemController@ajaxRequestPost');
+
 
 Route::get('/test', function() {
     return view('test');

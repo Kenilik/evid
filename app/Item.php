@@ -7,6 +7,7 @@ use App\Scopes\SortItemsAscScope;
 
 class Item extends Model
 {
+    use \Spatie\Tags\HasTags;
     /**
      * The "booting" method of the model.
      *

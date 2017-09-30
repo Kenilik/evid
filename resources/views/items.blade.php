@@ -14,11 +14,10 @@
                 @component('widgets.panel')
                     @slot('panelTitle', 'Conversation Timeline')
                     @slot('panelBody')
-                        <span>
-                            {{ $items->links() }}
-                            <input id="sItems" name="sItems">
-                        </span>
-
+                    <div style="text-align:center;">
+                        {{ $items->links() }}
+                        <input id="sItems" name="sItems" type="hidden">
+                    </div>
                         <ul class="timeline">
                             @forelse($items as $item)
                                 @if ($item->is_init_by_target == 0)
@@ -33,9 +32,9 @@
                                     @endif
                                     <div class="timeline-panel" data-key="{{ $item->id }}">
                                         <div class="timeline-heading">
-                                            <h4 class="timeline-title"> From: {{ $item->from_contact['name'] }} To: {{ $item->to_contact['name'] }}</h4>
+                                            <h4 class="timeline-title">From: {{ $item->from_contact['name'] }} To: {{ $item->to_contact['name'] }}</h4>
                                             <p>
-                                                <small class="text-muted"> From: {{ $item->from_contact['phone_num'] }} To: {{ $item->to_contact['phone_num'] }}
+                                                <small class="text-muted">From: {{ $item->from_contact['phone_num'] }} To: {{ $item->to_contact['phone_num'] }}
                                                     <i class="fa fa-clock-o"></i> {{ $item->date_time }}
                                                 </small>
                                             </p>
@@ -82,6 +81,31 @@
                                     {{ Form::button('<i class="fa fa-times"></i>', ['class' => 'btn btn-default', 'type' => 'button', 'onclick' => 'performUnmark()']) }}
                                 </span>
                             </div>
+                        @endslot
+                    @endcomponent
+
+                    @component('widgets.panel')
+                        @slot('panelTitle', 'Tags')
+                        @slot('panelBody')
+                            <table id="tblTags" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Tag</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr data-key="1">
+                                        <td>Tag1</td>
+                                        <td>Tag 1 Description</td>
+                                    </tr>
+                                    <tr data-key="2">
+                                        <td>Tag2</td>
+                                        <td>Tag 2 Description</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
                         @endslot
                     @endcomponent
 
@@ -138,32 +162,6 @@
                             </table>
                         @endslot
                     @endcomponent
-
-                    @component('widgets.panel')
-                        @slot('panelTitle', 'Tags')
-                        @slot('panelBody')
-                            <table id="tblTags" class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Tag</th>
-                                        <th>Description</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr data-key="1">
-                                        <td>Tag1</td>
-                                        <td>Tag 1 Description</td>
-                                    </tr>
-                                    <tr data-key="2">
-                                        <td>Tag2</td>
-                                        <td>Tag 2 Description</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                        @endslot
-                    @endcomponent
-
                     
                     @component('widgets.panel')
                         @slot('panelTitle', 'Datasets')
@@ -205,6 +203,20 @@
     </div>
     <!-- /.col-sm-12 -->
     <script type="text/javascript">
+
+        $( document ).ready(function() {
+            // make the tables fancy
+            $('#tblContacts').DataTable();
+            $('#tblTags').DataTable();
+
+            // hide the empty tag divs 
+            $('div.itemtags:empty').hide();
+
+            // apply any highlighting to the items
+            performMark();
+
+        });
+
         $("#tblDatasets > tbody > tr").click(function(event) {
             if ($(this).hasClass('success')) {
                 // do nothing because user has clicked on a row that is already selected.
@@ -213,9 +225,7 @@
                 $('#sDataset').val(''+$(this).attr('data-key')+'');
             }
         });
-    </script>>
 
-    <script>
         // Create an instance of mark.js and pass an argument containing
         // the DOM object of the context (where to search for matches)
 
@@ -253,21 +263,8 @@
 
         // Listen to input and option changes
         keywordInput.addEventListener("input", performMark);
-    </script>
 
-    <script>
-        $( document ).ready(function() {
-            // make the tables fancy
-            $('#tblContacts').DataTable();
-            $('#tblTags').DataTable();
 
-            // hide the empty tag divs 
-            $('div.itemtags:empty').hide();
-
-            // apply any highlighting to the items
-            performMark();
-
-        });
  
         // this function deals with multi select on the contacts table
         // when a row is selected, it's contact id (in the data-key attribute of the table row) is added to an array in a hidden field
@@ -303,7 +300,7 @@
                 a.push( $(this).attr('data-key') );
             }
             $('#sItems').val(a.join());
-            $(this).toggleClass('itemselected');
+            $(this).toggleClass('itemselected', 150);
         });
 
         $('#tblTags tbody').on( 'click', 'tr', function () {
@@ -321,12 +318,9 @@
                     a = toggleArrayItem(a, tag).sort();
                     // convert the array back to a string and put it back into the element
                     itags.text(a.join());
-                    alert(itags.text().length);
-                    if (itags.text().length = 0) {
-                        $(this).hide();
-                    } else {
-                        $(this).show()
-                    }
+                    //****************** this is where the ajax call will go ***********************//
+
+                    (itags.text().length == 0) ? itags.hide(150) : itags.show(150);
                 });
                 //$('.itemselected').removeClass('itemselected');
                 //$('div.itemtags:empty').hide();
@@ -334,6 +328,7 @@
                 alert('You must select some items to tag before selecting the tags.');
             }
         });
+
         function toggleArrayItem(a, v) {
             var i = a.indexOf(v);
             if (i === -1) {
@@ -343,5 +338,30 @@
             }
             return a;
         }
+            
     </script>
+
+<script type="text/javascript">
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    $(".btnTagItems").click(function(e){
+        e.preventDefault();
+        var name = $("input[name=name]").val();
+        var password = $("input[name=password]").val();
+        var email = $("input[name=email]").val();
+        $.ajax({
+            type:'POST',
+            url:'/ajaxRequest',
+            data:{name:name, password:password, email:email},
+            success:function(data){
+                 alert(data.success);
+           }
+        });
+    });
+</script>
+
 @endsection
