@@ -113,7 +113,7 @@ class ItemController extends Controller
                 })
             ->paginate(10);
                 
-        return view('items', compact('investigation', 'items', 'datasets', 'contacts', 'aCriteria'));
+        return view('items\items', compact('investigation', 'items', 'datasets', 'contacts', 'aCriteria'));
     }
 
     /**
