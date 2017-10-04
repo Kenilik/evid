@@ -147,7 +147,7 @@ $('#tblContacts tbody').on('click', 'tr', function () {
     $('#sContacts').val(a.join());
     $(this).toggleClass('selected');
 });
- 
+
 // this function deals with multi select on the timeline
 // when a timeline panel is selected, it's item id (in the data-key attribute) is added to an array in a hidden field
 
@@ -167,6 +167,7 @@ $('.timeline-panel').on('click', function () {
     $(this).toggleClass('itemselected', 150);
 });
 
+/*
 $('#tblTags tbody').on('click', 'tr', function () {
     var itemsToTag = $('.itemselected').toArray();
     if (itemsToTag.length > 0) {
@@ -191,7 +192,7 @@ $('#tblTags tbody').on('click', 'tr', function () {
 
             itags.text(a.join());
 
-            //****************** this might be where the ajax call will go ***********************//
+            //****************** this might be where the ajax call will go ***********************
 
             itags.text().length == 0 ? itags.hide(150) : itags.show(150);
         });
@@ -209,7 +210,7 @@ function toggleArrayItem(a, v) {
     }
     return a;
 }
-
+*/
 /***/ }),
 
 /***/ 50:

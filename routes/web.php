@@ -10,8 +10,7 @@ Route::get('/invs', 'InvestigationController@index');
 Route::get('/invs/{investigation}', 'InvestigationController@searchInvItems')->name('searchInvItems');
 Route::get('/invs/{investigation}/items', 'ItemController@index')->name('items');
 
-Route::get('ajaxRequest', 'ItemController@ajaxRequest');
-Route::post('ajaxRequest', 'ItemController@ajaxRequestPost');
+Route::post('/updateItemTags', 'ItemController@updateItemTags');
 
 
 Route::get('/test', function() {

@@ -4,10 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\SortItemsAscScope;
-
+use Spatie\Tags;
 class Item extends Model
 {
-    use \Spatie\Tags\HasTags;
+    use HasTags;
     /**
      * The "booting" method of the model.
      *
@@ -33,11 +33,6 @@ class Item extends Model
     		return $query->where('item_type_id', '=', 2);
         }
     }
-
-	public function tags()
-	{
-		return Item::existingTags()->pluck('name');
-	}
 
 	public function dataset()
 	{

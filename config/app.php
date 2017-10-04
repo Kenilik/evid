@@ -183,7 +183,12 @@ return [
 
         Maatwebsite\Excel\ExcelServiceProvider::class,
         
-        /*
+         /*
+         * Spatie Tags provider
+         */
+        Spatie\Tags\TagsServiceProvider::class,
+
+       /*
          * Laravel Collective Forms
          */
         'Collective\Html\HtmlServiceProvider',

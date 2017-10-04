@@ -9,11 +9,11 @@
                 </tr>
             </thead>
             <tbody>
-                <tr data-key="1">
+                <tr data-key="3">
                     <td>Tag1</td>
                     <td>Tag 1 Description</td>
                 </tr>
-                <tr data-key="2">
+                <tr data-key="4">
                     <td>Tag2</td>
                     <td>Tag 2 Description</td>
                 </tr>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Investigation;
 use App\Item;
 use App\Contact;
+use Spatie\Tags\Tag;
 
 use Illuminate\Http\Request;
 use Cookie;
@@ -21,15 +22,39 @@ class ItemController extends Controller
         $this->middleware('auth');
     }
 
-    public function ajaxRequest()
+    public function updateItemTags()
     {
-        return view('ajaxRequest');
-    }
+        $investigationID = request()->investigationID;
+        $itemsIDsToTag = request()->itemsIDsToTag;
+        $tagText = request()->tagText;
+        $locale = $locale ?? app()->getLocale();
+        $returnTags = collect();
 
-    public function ajaxRequestPost()
-    {
-        $input = request()->all();
-        return response()->json(['success'=>'Got Simple Ajax Request.']);
+        foreach ($itemsIDsToTag as $itemID) {
+            //get the item model
+            $item = Item::where('id', '=', $itemID)->first();          
+            
+            //if the tag the user has clicked is already attached to the item
+            $tag = $item->tags()
+                    ->where("name->{$locale}", $tagText)
+                    ->where('type', "$investigationID")
+                    ->first();
+            if ($tag != null) {
+                // detach the tag from the item
+                $item->detachTag($tag);
+            } else {              
+                //  attach the tag to the item
+                $item->attachTag($tag);
+            }
+            // get all tags for the item again (after this tag have been added or removed above)
+            $itemTags = $item->tags()->where('type', "$investigationID")->get();
+
+            $returnTags->push($itemID, $itemTags);
+*/
+        }
+
+        return response()->json($itemTags);
+        //return response()->json($returnTags);
     }    
 
     /**
@@ -65,8 +90,6 @@ class ItemController extends Controller
         } else { // otherwise use any existing cookies to search and set up the page.
             $aCriteria = $aCookies;
         }
-
-
 
         // update the cookies
         foreach ($searchCriteria as $criteria) {
