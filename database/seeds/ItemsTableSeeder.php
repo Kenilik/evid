@@ -19,6 +19,8 @@ class ItemsTableSeeder extends Seeder
 
         $i = DB::statement("UPDATE items JOIN contacts ON items.to_num = contacts.phone_num SET items.to_contact_id = contacts.id");
 
+        $i = DB::update("UPDATE items SET items.item_no=items.id");
+
         return null;
     }
 }

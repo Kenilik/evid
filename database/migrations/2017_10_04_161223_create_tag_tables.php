@@ -13,13 +13,15 @@ class CreateTagTables extends Migration
             $table->json('slug');
             $table->string('type')->nullable();
             $table->integer('order_column')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
         });
 
         Schema::create('taggables', function (Blueprint $table) {
             $table->integer('tag_id')->unsigned();
             $table->integer('taggable_id')->unsigned();
             $table->string('taggable_type');
+            $table->timestamp('created_at')->useCurrent();
 
             $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
         });

@@ -19,7 +19,9 @@
     <link rel="stylesheet" href="{{ asset('css/timeline.css') }}">
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
     <link rel="stylesheet" href="{{ asset('css/datatables.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/selectize.bootstrap3.css') }}">  
+    <link rel="stylesheet" href="{{ asset('css/selectize.bootstrap3.css') }}">
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
     <!-- Scripts -->
     <!-- <script src="https://use.fontawesome.com/60465e5aeb.js"></script> -->

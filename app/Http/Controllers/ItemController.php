@@ -22,40 +22,75 @@ class ItemController extends Controller
         $this->middleware('auth');
     }
 
+    /**
+     * This function handles the AJAX call to remove a single tag from an item
+     *
+     * @return an array of tags for the selected item.
+     */
+
+    public function removeItemTag()
+    {
+        $itemID = request()->itemID;
+        $tagID = request()->tagID;
+
+        $item = Item::where('id', '=', $itemID)->first();            
+        $tag = $item->tags()->where("id", $tagID)->first();
+        
+        // if $tag is not null the tag exists
+        if ($tag != null) {
+            // detach it from the item
+            $item->detachTag($tag);
+        } // else the has already been deleted from the db so do nothing just requery the tags for this item
+        $tags = $item->tags()->orderBy('order_column')->get();
+        
+        $return = collect(['itemID' => $itemID,'tags' => $tags]);
+        return response()->json($return);
+    }
+
+
+    /**
+     * This function handles the AJAX call to toggle tags
+     * to the selected items
+     *
+     * @return an array of items and their tags
+     */
+
     public function updateItemTags()
     {
         $investigationID = request()->investigationID;
         $itemsIDsToTag = request()->itemsIDsToTag;
         $tagText = request()->tagText;
         $locale = $locale ?? app()->getLocale();
+        $returnIDs = collect();
         $returnTags = collect();
+        $return = collect();
 
         foreach ($itemsIDsToTag as $itemID) {
             //get the item model
             $item = Item::where('id', '=', $itemID)->first();          
             
-            //if the tag the user has clicked is already attached to the item
-            $tag = $item->tags()
-                    ->where("name->{$locale}", $tagText)
-                    ->where('type', "$investigationID")
-                    ->first();
+            //query the db to see if the tag is already attached to this item
+            $tag = $item->tags()->where("name->{$locale}", $tagText)->where('type', "$investigationID")->first();
+            
+            // if $tag is null that means 
             if ($tag != null) {
                 // detach the tag from the item
                 $item->detachTag($tag);
-            } else {              
+            } else {
+                // get the existing tag object for this tag
+                $tag = Tag::findOrCreate($tagText, "$investigationID");
                 //  attach the tag to the item
                 $item->attachTag($tag);
             }
-            // get all tags for the item again (after this tag have been added or removed above)
-            $itemTags = $item->tags()->where('type', "$investigationID")->get();
+            // get all tags for the item (after this tag has been added or removed above)
+            $tags = $item->tags()->where('type', "$investigationID")->orderBy('order_column')->get();
 
-            $returnTags->push($itemID, $itemTags);
-*/
+            $returnIDs = $returnIDs->concat([$itemID]);
+            $returnTags = $returnTags->concat([$tags]);
         }
-
-        return response()->json($itemTags);
-        //return response()->json($returnTags);
-    }    
+        $return = collect(['itemIDs' => $returnIDs,'tags' => $returnTags]);
+        return response()->json($return);
+    }
 
     /**
      * Display a listing of the resource.
@@ -135,8 +170,10 @@ class ItemController extends Controller
                     return $query->where('text_content', 'like', '%' . $sText . '%');
                 })
             ->paginate(10);
-                
-        return view('items\items', compact('investigation', 'items', 'datasets', 'contacts', 'aCriteria'));
+
+        $taglist = Tag::withType("$investigation->id")->get();
+        
+        return view('items\items', compact('investigation', 'items', 'datasets', 'contacts', 'taglist', 'aCriteria'));
     }
 
     /**

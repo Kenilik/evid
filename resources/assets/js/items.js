@@ -3,12 +3,16 @@ $( document ).ready(function() {
     $('#tblContacts').DataTable();
     $('#tblTags').DataTable();
 
+    // make the tags field sortable
+    $( ".taglist" ).sortable();
+    $( ".taglist" ).disableSelection();
+
     // hide the empty tag divs 
     $('div.itemtags:empty').hide();
+    //alert($('div.itemtags:empty').length);
 
     // apply any highlighting to the items
     performMark();
-
 });
 
 $("#tblDatasets > tbody > tr").click(function(event) {
@@ -62,7 +66,7 @@ keywordInput.addEventListener("input", performMark);
 
 // this function deals with multi select on the contacts table
 // when a row is selected, it's contact id (in the data-key attribute of the table row) is added to an array in a hidden field
-// when ar row is un-selected, it's contact id is removed from the hidden field array
+// when a row is un-selected, it's contact id is removed from the hidden field array
 // then the row selection is toggled.
 $('#tblContacts tbody').on( 'click', 'tr', function () {
     var a = $('#sContacts').val().split(',');
@@ -80,7 +84,6 @@ $('#tblContacts tbody').on( 'click', 'tr', function () {
 
 // this function deals with multi select on the timeline
 // when a timeline panel is selected, it's item id (in the data-key attribute) is added to an array in a hidden field
-
 $('.timeline-panel').on('click', function () {
     var a = $('#sItems').val().split(',');
     if ($(this).hasClass('itemselected')) {
@@ -95,46 +98,117 @@ $('.timeline-panel').on('click', function () {
     }
     $('#sItems').val(a.join());
     $(this).toggleClass('itemselected', 150);
+
 });
 
-$('#tblTags tbody').on( 'click', 'tr', function () {
-    var itemsToTag = $('.itemselected').toArray();
-    if (itemsToTag.length > 0) { //there are some items selected
-        
-        var tag = $(this).children('td:first').text();
-        
-        // for each selected item get the value of the textarea
+// this function stops the click event being propagated up to the timeline
+// panel and toggling the itemselected when the user clicks on the remove X
+$('.itemtag').on('click', (function(e) {
+    e.stopPropagation();
+}));
 
-        $('.itemselected').each(function(index) {
-            // get the item tags for this item selected and create an array 
-            
-            var itags = $(this).find('.itemtags');
+// this function removes this tag from an item via an AJAX call
+$('.remove').on('click', (function(e) {
+    var itemID = $(this).parents('.timeline-panel').attr('data-key');
+    var tagID = $(this).parent().attr('data-key');
+    $.ajax({
+        type: 'post',
+        url: '/removeItemTag',
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        // pass an array of the item ids to be tagged and the tag text
+            data: {
+            'itemID': itemID,
+            'tagID': tagID
+            },
+            // expect an array back from the ajax call that has an array with the item ID
+            // and for each item ID, has an array of the tags that should now be on that item.
+            success: function(data) {
+                if ((data.errors)) {
+                    $('.error').removeClass('hidden');
+                    $('.error').text(data.errors.name);
+                } else {
+                    $('.error').remove();
+                    var itemID = data.itemID;
+                    var tags = data.tags;
+                    var displayItemTags = false;
+                    //get the itemtags dom for the item
+                    var itemTags = $('.timeline-panel[data-key='+itemID+']').find('.itemtags');
+                    var newTagsHTML = ""
+                    //clear the current tags that are currently showing
+                    itemTags.html("").show(150);
+                    // loop through the tags array
 
-            // get the value of the tags field. check if it has any content, if so turn it into an array, otherwise return an empty array
-            var a = [];
-            if (itags.text().length != 0) { a = itags.text().split(",");}
-            
-            a = toggleArrayItem(a, tag).sort();
-
-            itags.text(a.join());
-            
-            //****************** this might be where the ajax call will go ***********************//
-
-            (itags.text().length == 0) ? itags.hide(150) : itags.show(150);
-
+                    for (var i = 0; i < tags.length; i++) {
+                        // for each tag create a div inside the selected item's itemtag field                                
+                        newTagsHTML = newTagsHTML + "<span class='itemtag'>"+tags[i].name.en_nz+" <a href='' class='remove' tabindex='-1' title='Remove'><i class='fa fa-times'></i></a></span>";
+                        var displayItemTags = true;
+                    }
+                    itemTags.append(newTagsHTML).show(150);                    
+                    (displayItemTags) ? itemTags.show(150) : itemTags.hide(150);
+                }
+            }
         });
+}));
 
+// this function is triggered when the user clicks on a tag in the tag list.
+// the tag is applied to the selected items via an ajax call.
+// the tags on the select items are returned and the  page is updated.
+
+//$('#tblTags tbody').on('click', 'tr', function () {
+$('.taglist li').click(function () {
+    var itemsToTag = $('.itemselected').toArray();
+    var investigationID = $('#investigationID').val();
+    // if there are some items selected
+    if (itemsToTag.length > 0) {
+        // get the text for the tag we are applying.
+        var tagText = $(this).text();
+        var itemsIDsToTag = [];
+        $('.itemselected').each(function (index) {
+            itemsIDsToTag[index] = $(this).attr('data-key');
+        });
+        $.ajax({
+            type: 'post',
+            url: '/updateItemTags',
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            // pass an array of the item ids to be tagged and the tag text
+            data: {
+                'investigationID': investigationID,
+                'itemsIDsToTag': itemsIDsToTag,
+                'tagText': tagText
+            },
+            // expect an array back from the ajax call that has an array with the item ID
+            // and for each item ID, has an array of the tags that should now be on that item.
+            success: function(data) {
+                if ((data.errors)) {
+                    $('.error').removeClass('hidden');
+                    $('.error').text(data.errors.name);
+                } else {
+                    $('.error').remove();
+                    var itemIDs = data.itemIDs;
+                    var tags = data.tags;
+                    var displayItemTags = false;
+                    // loop through the ItemIDs array
+                    for (var i = 0; i < itemIDs.length; i++) {
+                        //get the itemtags dom for the item
+                        var itemTags = $('.itemselected[data-key='+itemIDs[i]+']').find('.itemtags');
+                        var newTagsHTML = ""
+                        //clear the current tags that are currently
+                        itemTags.html("").show(150);
+                        // loop through the tags array
+                        for (var j = 0; j < tags[i].length; j++) {
+                            // for each tag create a div inside the selected item's itemtag field                                
+                            newTagsHTML = newTagsHTML + "<span class='itemtag' data-key='"+tags[i][j].id+"'>"+tags[i][j].name.en_nz+" <a href='' class='remove' tabindex='-1' title='Remove'><i class='fa fa-times'></i></a></span>";
+                            var displayItemTags = true;
+                        }
+                        itemTags.append(newTagsHTML).show(150);
+                        //console.log(displayItemTags);
+                        (displayItemTags) ? itemTags.show(150) : itemTags.hide(150);
+                    }
+                }
+            }
+        });
     } else {
         alert('You must select some items to tag before selecting the tags.');
     }
 });
 
-function toggleArrayItem(a, v) {
-    var i = a.indexOf(v);
-    if (i === -1) {
-        a.push(v);
-    } else {
-        a.splice(i,1);
-    }
-    return a;
-}

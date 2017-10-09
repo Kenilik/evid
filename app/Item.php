@@ -4,10 +4,11 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\SortItemsAscScope;
-use Spatie\Tags;
+
 class Item extends Model
 {
-    use HasTags;
+    use \Spatie\Tags\HasTags;
+
     /**
      * The "booting" method of the model.
      *

@@ -10,8 +10,9 @@ Route::get('/invs', 'InvestigationController@index');
 Route::get('/invs/{investigation}', 'InvestigationController@searchInvItems')->name('searchInvItems');
 Route::get('/invs/{investigation}/items', 'ItemController@index')->name('items');
 
+//  AJAX call handlers
 Route::post('/updateItemTags', 'ItemController@updateItemTags');
-
+Route::post('/removeItemTag', 'ItemController@removeItemTag');
 
 Route::get('/test', function() {
     return view('test');

@@ -1,23 +1,14 @@
 @component('widgets.panel')
     @slot('panelTitle', 'Tags')
     @slot('panelBody')
-        <table id="tblTags" class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Tag</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr data-key="3">
-                    <td>Tag1</td>
-                    <td>Tag 1 Description</td>
-                </tr>
-                <tr data-key="4">
-                    <td>Tag2</td>
-                    <td>Tag 2 Description</td>
-                </tr>
-            </tbody>
-        </table>
+        <ul class="taglist ui-sortable">
+            @forelse($taglist as $tag)
+                <li data-key="{{ $tag->id }}">
+                    {{ $tag->name }}
+                </li>
+            @empty
+                <p>There are no tags to display. Click here to create some.</p>
+            @endforelse
+        </ul>
     @endslot
 @endcomponent
