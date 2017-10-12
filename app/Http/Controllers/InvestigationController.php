@@ -30,7 +30,7 @@ class InvestigationController extends Controller
     public function index()
     {
         $invs = auth()->User()->Investigations->all();
-        return view('invs', compact('invs'));
+        return view('invs\invs', compact('invs'));
     }
     /**
      * Display a listing of the resource.

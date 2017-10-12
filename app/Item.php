@@ -8,6 +8,7 @@ use App\Scopes\SortItemsAscScope;
 class Item extends Model
 {
     use \Spatie\Tags\HasTags;
+
     /**
      * The "booting" method of the model.
      *
@@ -33,11 +34,6 @@ class Item extends Model
     		return $query->where('item_type_id', '=', 2);
         }
     }
-
-	public function tags()
-	{
-		return Item::existingTags()->pluck('name');
-	}
 
 	public function dataset()
 	{

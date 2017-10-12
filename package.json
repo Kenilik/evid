@@ -13,7 +13,7 @@
             "axios": "^0.15.3",
             "bootstrap-sass": "^3.3.7",
             "cross-env": "^3.2.3",
-            "eslint": "^4.7.2",
+            "eslint": "^4.8.0",
             "font-awesome": "^4.7.0",
             "jquery": "^3.2.1",
             "jquery-ui-bundle": "^1.12.1",
@@ -29,6 +29,7 @@
       "dependencies": {
             "browserify": "^14.4.0",
             "gulp": "^3.9.1",
+            "jquery-file-upload": "^4.0.5",
             "laravel-elixir-vueify": "^1.0.6",
             "selectize": "^0.12.4",
             "vue-template-compiler": "^2.4.4",

@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 46);
+/******/ 	return __webpack_require__(__webpack_require__.s = 48);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -10333,17 +10333,17 @@ return jQuery;
 /***/ (function(module, exports, __webpack_require__) {
 
 // metisMenu
-__webpack_require__(40);
+__webpack_require__(42);
 
 // theme
-__webpack_require__(36);
+__webpack_require__(38);
 
 // frontend
-__webpack_require__(35);
+__webpack_require__(37);
 
 /***/ }),
 
-/***/ 35:
+/***/ 37:
 /***/ (function(module, exports) {
 
 /*
@@ -10518,7 +10518,7 @@ new Chart(cdonut1).Doughnut(ddata1, {responsive: true});
 
 /***/ }),
 
-/***/ 36:
+/***/ 38:
 /***/ (function(module, exports) {
 
 $(function () {
@@ -10559,7 +10559,7 @@ $(function () {
 
 /***/ }),
 
-/***/ 40:
+/***/ 42:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -10914,7 +10914,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 46:
+/***/ 48:
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(10);
