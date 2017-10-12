@@ -4,15 +4,29 @@
  */
 Auth::routes();
 
+Route::get('/uploadfile','UploadFileController@index');
+Route::post('/uploadfile','UploadFileController@showUploadFile');
+
 Route::get('/', 'InvestigationController@index')->name('home');
 
+// Investigation routes
 Route::get('/invs', 'InvestigationController@index');
-Route::get('/invs/{investigation}', 'InvestigationController@searchInvItems')->name('searchInvItems');
+//Route::get('/invs/{investigation}', 'InvestigationController@searchInvItems')->name('searchInvItems');
 Route::get('/invs/{investigation}/items', 'ItemController@index')->name('items');
 
-//  AJAX call handlers
+// Item tagging AJAX routes
 Route::post('/updateItemTags', 'ItemController@updateItemTags');
 Route::post('/removeItemTag', 'ItemController@removeItemTag');
+
+// Dataset CRUD handlers
+Route::get('/invs/{investigation}/datasets', 'DatasetController@index');
+Route::post('/datasets/create', 'DatasetController@create')->name('dataset.create');
+Route::post('/datasets', 'DatasetController@store')->name('dataset.store');
+//Route::get('/datasets/{dataset}', 'DatasetController@show')->name('dataset.show');;
+//Route::get('/datasets/{dataset}/edit','DatasetController@edit')->name('dataset.edit');;
+Route::put('/datasets/{dataset}', 'DatasetController@update')->name('dataset.update');
+Route::delete('/datasets/{dataset}', 'DatasetController@destroy');
+
 
 Route::get('/test', function() {
     return view('test');

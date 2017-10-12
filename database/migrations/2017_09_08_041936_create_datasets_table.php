@@ -18,7 +18,8 @@ class CreateDatasetsTable extends Migration
             $table->integer('investigation_id')->unsigned();
             $table->string('description');
             $table->string('target_num')->nullable();
-            $table->string('target_name');
+            $table->string('target_name')->nullable();
+            $table->string('file_name')-nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable();
 
